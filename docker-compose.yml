@@ -1,0 +1,57 @@
+version: '3'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    image: laravel
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /back
+    volumes:
+      - ${PATH_BACK}:/back
+      - ${PATH_CONF}/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - mrkvk-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+#    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${PATH_BACK}:/back
+      - ${PATH_LOG}:/var/log/nginx/
+      - ${PATH_CONF}/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - mrkvk-network
+
+  db:
+    image: postgres:13-alpine
+    ports:
+      - 5432:5432
+    working_dir: /www
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ${PATH_DB}/dump:/app/dump
+      - ${PATH_DB}/db:/var/lib/postgresql/data
+    networks:
+      - mrkvk-network
+
+#Docker Networks
+networks:
+  mrkvk-network:
+    driver: bridge
