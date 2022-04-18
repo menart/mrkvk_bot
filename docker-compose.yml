@@ -27,12 +27,13 @@ services:
 #    restart: unless-stopped
     tty: true
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
     volumes:
       - ${PATH_BACK}:/back
       - ${PATH_LOG}:/var/log/nginx/
       - ${PATH_CONF}/nginx/conf.d/:/etc/nginx/conf.d/
+      - ${PATH_SSL}:/etc/letsencrypt/
     networks:
       - mrkvk-network
 

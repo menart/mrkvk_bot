@@ -135,5 +135,8 @@
     },
     "symfony/yaml": {
         "version": "v6.0.3"
+    },
+    "telegram-bot/api": {
+        "version": "v2.3.24"
     }
 }
